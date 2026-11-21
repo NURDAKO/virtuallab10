@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>№10 Зертханалық жұмыс | Вегетативті көбею (10 ұпай)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #065f46 10%, #047857 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #certificateModal, #certificateModal * { visibility: visible; }
+            #certificateModal {
+                position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; padding: 0 !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6">
+
+    <!-- Хабарлама терезесі -->
+    <div id="toastBox" class="fixed top-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-emerald-400/40 flex items-center gap-3 transition-all">
+        <span id="toastIcon" class="text-xl">🌱</span>
+        <p id="toastMsg" class="text-sm font-medium"></p>
+    </div>
+
+    <!-- ЖОҒАРҒЫ ПАНЕЛЬ -->
+    <header class="max-w-6xl mx-auto glass-panel rounded-3xl shadow-2xl p-4 sm:p-6 mb-6 border border-white/40">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white text-2xl shadow-lg shrink-0">
+                    🌱
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 rounded-full">7-сынып • Биология</span>
+                        <span class="px-2.5 py-0.5 text-xs font-bold bg-teal-100 text-teal-800 rounded-full">Зертханалық жұмыс №10 (10 ұпай)</span>
+                    </div>
+                    <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 leading-tight">
+                        №10 зертханалық жұмыс. Бөлме өсімдіктерін қаламшеден өсіру мысалында вегетативті көбею тәсілдері
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Оқушы деректері мен Мұғалім режимі -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div id="studentBadge" class="hidden bg-slate-100 border border-slate-200 px-3.5 py-2 rounded-2xl text-xs sm:text-sm">
+                    <span class="text-slate-500">Оқушы:</span> <strong id="displayStudentName" class="text-slate-900"></strong>
+                    <span class="mx-1.5 text-slate-300">|</span>
+                    <strong id="displayStudentClass" class="text-emerald-700"></strong>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-2xl flex items-center gap-2">
+                    <span class="text-xs font-semibold text-emerald-800">Ұпай:</span>
+                    <span id="totalScoreDisplay" class="text-lg font-extrabold text-emerald-600">0 / 10</span>
+                </div>
+                <button onclick="openTeacherModal()" class="px-3.5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow">
+                    <span>👩‍🏫</span> Мұғалім режимі
+                </button>
+            </div>
+        </div>
+
+        <!-- Прогресс жолағы -->
+        <div class="mt-4 pt-4 border-t border-slate-200/80">
+            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                <span>Зертханалық жұмыстың орындалу барысы</span>
+                <span id="progressText">0% орындалды (0 / 4 кезең)</span>
+            </div>
+            <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 transition-all duration-500 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- НЕГІЗГІ КОНТЕЙНЕР -->
+    <main class="max-w-6xl mx-auto">
+
+        <!-- 0-КЕЗЕҢ: ТІРКЕУ -->
+        <section id="loginScreen" class="glass-panel rounded-3xl shadow-2xl p-6 sm:p-10 max-w-2xl mx-auto border border-white/50">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 text-3xl mb-3">
+                    🌱
+                </div>
+                <h2 class="text-2xl font-extrabold text-slate-900">Зертханалық жұмысты бастау</h2>
+                <p class="text-sm text-slate-600 mt-1">
+                    Жұмыс соңында мұғалімге тексеруге арналған жеке <strong>Есеп парағы (10 ұпайлық шкала)</strong> қалыптасады. Өз деректеріңді енгіз:
+                </p>
+            </div>
+
+            <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 mb-6 text-xs sm:text-sm text-emerald-950 space-y-1.5">
+                <p><strong>🎯 Мақсаты:</strong> Бөлме өсімдіктерін қаламшеден өсіру арқылы вегетативті көбею тәсілдерін зерттеу.</p>
+                <p><strong>🧰 Бағалау жүйесі:</strong> Барлығы 10 ұпай (Тәжірибелік қадамдар: 3ұ, Қолмен қаламшедеу практикасы: 3ұ, Бақылау сұрақтары: 2ұ, Қорытынды: 2ұ).</p>
+            </div>
+
+            <form onsubmit="startLab(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1.5">Оқушының аты-жөні (Толық):</label>
+                    <input type="text" id="studentNameInput" required placeholder="Мысалы: Ерланұлы Айдын"
+                           class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900 font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1.5">Сыныбы:</label>
+                    <select id="studentClassInput" required class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-900 font-medium bg-white">
+                        <option value="7 «А»">7 «А» сыныбы</option>
+                        <option value="7 «Ә»">7 «Ә» сыныбы</option>
+                        <option value="7 «Б»">7 «Б» сыныбы</option>
+                        <option value="7 «В»">7 «В» сыныбы</option>
+                        <option value="7 «Г»">7 «Г» сыныбы</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-base shadow-lg transition transform active:scale-98">
+                    Зертханаға кіру (10 ұпайлық режим) →
+                </button>
+            </form>
+        </section>
+
+        <!-- ЖҰМЫС АЛАҢЫ -->
+        <section id="labWorkspace" class="hidden space-y-6">
+
+            <!-- НАВИГАЦИЯ ТАБТАРЫ -->
+            <nav class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <button onclick="switchTab(1)" id="tabBtn1" class="tab-btn p-3 rounded-2xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 bg-white text-emerald-800 shadow-lg ring-2 ring-emerald-400">
+                    <span class="text-lg">🌿</span>
+                    <span>1. Қаламшелеу тәжірибесі (3ұ)</span>
+                    <span id="statusBadge1" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Орындалмаған</span>
+                </button>
+                <button onclick="switchTab(2)" id="tabBtn2" class="tab-btn p-3 rounded-2xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 bg-white/80 text-slate-700 hover:bg-white">
+                    <span class="text-lg">✂️</span>
+                    <span>2. Қолмен қаламшелеу (3ұ)</span>
+                    <span id="statusBadge2" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Орындалмаған</span>
+                </button>
+                <button onclick="switchTab(3)" id="tabBtn3" class="tab-btn p-3 rounded-2xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 bg-white/80 text-slate-700 hover:bg-white">
+                    <span class="text-lg">❓</span>
+                    <span>3. Бақылау сұрақтары (2ұ)</span>
+                    <span id="statusBadge3" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Орындалмаған</span>
+                </button>
+                <button onclick="switchTab(4)" id="tabBtn4" class="tab-btn p-3 rounded-2xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 bg-white/80 text-slate-700 hover:bg-white">
+                    <span class="text-lg">📋</span>
+                    <span>4. Қорытынды (2ұ)</span>
+                    <span id="statusBadge4" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Орындалмаған</span>
+                </button>
+                <button onclick="switchTab(5)" id="tabBtn5" class="col-span-2 sm:col-span-1 tab-btn p-3 rounded-2xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 bg-white/80 text-slate-700 hover:bg-white">
+                    <span class="text-lg">🎓</span>
+                    <span>5. Сертификат</span>
+                    <span id="statusBadge5" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Орындалмаған</span>
+                </button>
+            </nav>
+
+            <!-- 1-КЕЗЕҢ: ҚАЛАМШЕЛЕУ ТӘЖІРИБЕСІН РЕТТЕМЕН ОРНАЛАСТЫРУ (3 ұпай) -->
+            <div id="expPanel1" class="exp-panel glass-panel rounded-3xl shadow-2xl p-5 sm:p-8 border border-white/50 space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Тәжірибе №1 (3 ұпай)</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1.5">Қаламшелеу жұмысының кезеңдерін дұрыс реттеңіз</h2>
+                    </div>
+                    <button onclick="resetExp1()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">🔄 Қайта бастау</button>
+                </div>
+
+                <p class="text-xs sm:text-sm text-slate-600">Қаламше арқылы өсімдікті өсіру реттілігін (1-ден 4-ке дейін) дұрыс таңдаңыз:</p>
+
+                <div class="space-y-3 text-xs sm:text-sm">
+                    <div class="bg-white border p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                        <span class="font-medium text-slate-800">А) Қаламшені топыраққа немесе таза суға салып, тамыр шығуын күту</span>
+                        <select id="step_a" class="border rounded-xl p-2 font-bold text-emerald-800 bg-emerald-50">
+                            <option value="">Реті...</option>
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="bg-white border p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                        <span class="font-medium text-slate-800">Б) Сау бөлме өсімдігінен (герань, традесканция) ұзындығы 10-15 см қаламше кесіп алу</span>
+                        <select id="step_b" class="border rounded-xl p-2 font-bold text-emerald-800 bg-emerald-50">
+                            <option value="">Реті...</option>
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="bg-white border p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                        <span class="font-medium text-slate-800">В) Тамырланған жас өсімдікті жеке гүл құмырасына (топыраққа) отырғызу және суару</span>
+                        <select id="step_c" class="border rounded-xl p-2 font-bold text-emerald-800 bg-emerald-50">
+                            <option value="">Реті...</option>
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="bg-white border p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                        <span class="font-medium text-slate-800">Г) Төменгі жапырақтарын алып тастап, жоғарғы 2-3 жапырақты қалдыру</span>
+                        <select id="step_g" class="border rounded-xl p-2 font-bold text-emerald-800 bg-emerald-50">
+                            <option value="">Реті...</option>
+                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="checkExp1()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow">1-тапсырманы тексеру (3 ұпай)</button>
+            </div>
+
+            <!-- 2-КЕЗЕҢ: ОҚУШЫ ӨЗІ ҚОЛМЕН ЖАСАЙТЫН ПРАКТИКА (3 ұпай) -->
+            <div id="expPanel2" class="hidden exp-panel glass-panel rounded-3xl shadow-2xl p-5 sm:p-8 border border-white/50 space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Тапсырма №2 (3 ұпай) — Практикалық</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1.5">Үйде қолмен өсімдікті қаламшелеп отырғызу</h2>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 text-xs sm:text-sm text-emerald-950 space-y-2">
+                    <p><strong>🪴 Практикалық тапсырма:</strong> Үйде қандай да бір бөлме өсімдігін (мысалы, герань немесе бөлме шырмауығы) алып, оны қаламше арқылы өз қолыңызбен отырғызыңыз немесе стақандағы суға салып тамырлатыңыз.</p>
+                    <p>Қолмен атқарған бұл жұмысыңыздың нәтижесін сипаттап жазыңыз:</p>
+                </div>
+
+                <div class="space-y-4 text-xs sm:text-sm">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Қолданылған өсімдік түрі:</label>
+                        <input type="text" id="plantTypeInput" placeholder="Мысалы: Герань (Қазтамақ) гүлі"
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Қаламшені дайындау және отырғызу барысы:</label>
+                        <textarea id="plantActionDesc" rows="3" placeholder="Мысалы: Сабақтың ұшынан 12 см кесіп алып, төменгі жапырақтарын жұлып, стақандағы таза суға салып қойдым..."
+                                  class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+                    <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-white cursor-pointer">
+                        <input type="checkbox" id="plantHandmadeConfirm" class="w-4 h-4 text-emerald-600 rounded">
+                        <span class="font-semibold text-slate-800">Мен бұл өсімдікті үйде өз қолыммен қаламшелеп отырғызғанымды растаймын.</span>
+                    </label>
+                    <button onclick="checkExp2()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow">Қолмен жасалған жұмысты тапсыру (3 ұпай)</button>
+                </div>
+            </div>
+
+            <!-- 3-КЕЗЕҢ: БАҚЫЛАУ СҰРАҚТАРЫ (2 ұпай) -->
+            <div id="expPanel3" class="hidden exp-panel glass-panel rounded-3xl shadow-2xl p-5 sm:p-8 border border-white/50 space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Тапсырма №3 (2 ұпай)</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1.5">Бақылау сұрақтарына жауап беру</h2>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-xs sm:text-sm">
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-4 space-y-3">
+                        <label class="block font-bold text-slate-800">1. Қаламшенің төменгі жапырақтарын неліктен алып тастау керек?</label>
+                        <select id="questQ1" class="w-full border rounded-xl p-2.5">
+                            <option value="">Таңдаңыз...</option>
+                            <option value="correct">Жапырақтар суға тиіп шіріп кетпеу үшін және ылғалдың артық булануын болдырмау үшін.</option>
+                            <option value="wrong">Өсімдік әдемі көрінуі үшін ғана.</option>
+                        </select>
+                    </div>
+                    <button onclick="checkExp3()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow">3-тапсырманы тексеру (2 ұпай)</button>
+                </div>
+            </div>
+
+            <!-- 4-КЕЗЕҢ: ҚОРЫТЫНДЫ (2 ұпай) -->
+            <div id="expPanel4" class="hidden exp-panel glass-panel rounded-3xl shadow-2xl p-5 sm:p-8 border border-white/50 space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Тапсырма №4 (2 ұпай)</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1.5">Жалпы қорытынды</h2>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-5 space-y-3">
+                        <p class="text-sm font-bold text-slate-900">
+                            ❓ Өсімдіктерді вегетативті жолмен (соның ішінде қаламше арқылы) көбейтудің тұқыммен көбейтуден қандай артықшылығы бар?
+                        </p>
+                        <div class="space-y-2 text-xs sm:text-sm">
+                            <label class="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer">
+                                <input type="radio" name="plantFinal" value="wrong" class="mt-1">
+                                <span>Ешқандай артықшылығы жоқ, тұқым әлдеқайда жылдам өседі.</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-emerald-50 cursor-pointer">
+                                <input type="radio" name="plantFinal" value="correct" class="mt-1">
+                                <span>Аналық өсімдіктің барлық сорттық қасиеттерін (түсін, дәмін, сапасын) толық сақтап қалады және тез өніп шығады.</span>
+                            </label>
+                        </div>
+                        <button onclick="checkExp4()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition shadow">Қорытындыны тексеру (2 ұпай)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5-КЕЗЕҢ: СЕРТИФИКАТ -->
+            <div id="expPanel5" class="hidden exp-panel glass-panel rounded-3xl shadow-2xl p-6 sm:p-10 border border-white/50 text-center space-y-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 text-emerald-700 text-4xl shadow-inner">
+                    🏆
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">№10 Зертханалық жұмыс сәтті аяқталды!</h2>
+                    <p class="text-sm text-slate-600 mt-2 max-w-xl mx-auto">
+                        Барлық тапсырмалар (соның ішінде үйдегі қолмен қаламшелеу тәжірибесі) орындалды. Жалпы ұпайыңыз — <strong id="finalScoreText" class="text-emerald-700 text-lg">10 / 10</strong>.
+                    </p>
+                </div>
+
+                <button onclick="openCertificateModal()" class="py-4 px-8 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-base shadow-xl transition transform active:scale-98">
+                    📄 Мұғалімге арналған есеп парағын көру (10 ұпайлық сертификат)
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- МҰҒАЛІМ РЕЖИМІ МОДАЛЫ -->
+    <div id="teacherModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-extrabold text-slate-900">👩‍🏫 Мұғалімнің басқару панелі</h3>
+                <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
+            </div>
+            <p class="text-xs text-slate-600">Оқушының 10 ұпайлық нәтижесі мен үйдегі қолмен жасаған қаламшелеу жұмысының сипаттамасын көру (Құпия сөз: 1234).</p>
+            <form onsubmit="verifyTeacher(event)" class="space-y-3">
+                <input type="password" id="teacherPass" required placeholder="Құпия сөз (1234)"
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm outline-none">
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm shadow">Тексеру</button>
+            </form>
+            <div id="teacherResultArea" class="hidden pt-3 border-t text-xs text-slate-700 space-y-2">
+                <p class="font-bold text-emerald-700">✅ Оқушының нәтижелері мен қолмен жасаған жұмысы:</p>
+                <div id="studentStatsList" class="max-h-48 overflow-y-auto space-y-2 bg-slate-50 p-3 rounded-xl border"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СЕРТИФИКАТ МОДАЛЫ -->
+    <div id="certificateModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 sm:p-10 relative border-4 border-emerald-600/20 space-y-6">
+            <button onclick="closeCertificateModal()" class="no-print absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center">✕</button>
+
+            <div class="text-center border-b border-slate-200 pb-5">
+                <div class="inline-block p-2.5 rounded-2xl bg-emerald-50 text-emerald-700 text-2xl mb-2">🏫</div>
+                <h3 class="text-xs font-bold uppercase tracking-widest text-emerald-700">Жалпы білім беретін мектеп</h3>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">№10 ЗЕРТХАНАЛЫҚ ЖҰМЫС ЕСЕП ПАРАҒЫ</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Тақырыбы: Бөлме өсімдіктерін қаламшеден өсіру (10 ұпай)</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl text-xs sm:text-sm">
+                <div><span class="text-slate-500">Оқушы:</span> <strong id="certName" class="text-slate-900"></strong></div>
+                <div><span class="text-slate-500">Сыныбы:</span> <strong id="certClass" class="text-emerald-700"></strong></div>
+                <div><span class="text-slate-500">Жалпы ұпай:</span> <strong id="certScore" class="text-emerald-600 text-base"></strong></div>
+                <div><span class="text-slate-500">Күні:</span> <strong id="certDate" class="text-slate-700"></strong></div>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+                <h4 class="font-bold text-slate-800 border-b pb-1">Тапсырмалар нәтижелері:</h4>
+                <ul class="space-y-2 text-slate-700">
+                    <li class="flex justify-between items-center bg-emerald-50/50 p-2.5 rounded-xl">
+                        <span>1. Қаламшелеу тәжірибесінің реттілігі</span><strong id="certStatus1" class="text-emerald-700">0 / 3 ұпай</strong>
+                    </li>
+                    <li class="flex justify-between items-center bg-emerald-50/50 p-2.5 rounded-xl">
+                        <span>2. Үйде қолмен өсімдік отырғызу практикасы</span><strong id="certStatus2" class="text-emerald-700">0 / 3 ұпай</strong>
+                    </li>
+                    <li class="flex justify-between items-center bg-emerald-50/50 p-2.5 rounded-xl">
+                        <span>3. Бақылау сұрақтары</span><strong id="certStatus3" class="text-emerald-700">0 / 2 ұпай</strong>
+                    </li>
+                    <li class="flex justify-between items-center bg-emerald-50/50 p-2.5 rounded-xl">
+                        <span>4. Жалпы қорытынды</span><strong id="certStatus4" class="text-emerald-700">0 / 2 ұпай</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t">
+                <div class="text-xs text-slate-500">Мұғалімнің қолы: ____________________</div>
+                <button onclick="window.print()" class="no-print py-3 px-6 rounded-2xl bg-slate-900 text-white font-bold text-sm shadow">🖨️ Басып шығару</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let student = { name: "", class: "", score: 0, plantInfo: {} };
+        let currentTab = 1;
+        let progress = { exp1: false, exp2: false, exp3: false, exp4: false };
+
+        function showToast(msg, icon = '🌱') {
+            const box = document.getElementById('toastBox');
+            document.getElementById('toastMsg').innerText = msg;
+            document.getElementById('toastIcon').innerText = icon;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 3500);
+        }
+
+        function startLab(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentNameInput').value.trim();
+            const cls = document.getElementById('studentClassInput').value;
+            if (!name) return;
+
+            student.name = name;
+            student.class = cls;
+
+            document.getElementById('displayStudentName').innerText = name;
+            document.getElementById('displayStudentClass').innerText = cls;
+            document.getElementById('studentBadge').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('labWorkspace').classList.remove('hidden');
+            
+            showToast(`Қош келдіңіз, ${name}! №10 зертханалық жұмысты бастайық.`, '👋');
+        }
+
+        function switchTab(tabNum) {
+            document.querySelectorAll('.exp-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-emerald-800', 'shadow-lg', 'ring-2', 'ring-emerald-400');
+                b.classList.add('bg-white/80', 'text-slate-700');
+            });
+
+            document.getElementById(`expPanel${tabNum}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tabBtn${tabNum}`);
+            activeBtn.classList.remove('bg-white/80', 'text-slate-700');
+            activeBtn.classList.add('bg-white', 'text-emerald-800', 'shadow-lg', 'ring-2', 'ring-emerald-400');
+            currentTab = tabNum;
+        }
+
+        function updateProgress() {
+            let completedCount = Object.values(progress).filter(Boolean).length;
+            let percent = (completedCount / 4) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').innerText = `${Math.round(percent)}% орындалды (${completedCount} / 4 кезең)`;
+            let roundedScore = Math.round(student.score * 10) / 10;
+            document.getElementById('totalScoreDisplay').innerText = `${roundedScore} / 10`;
+            document.getElementById('finalScoreText').innerText = `${roundedScore} / 10`;
+        }
+
+        function resetExp1() {
+            ['a', 'b', 'c', 'g'].forEach(k => document.getElementById(`step_${k}`).value = "");
+        }
+
+        function checkExp1() {
+            const sa = document.getElementById('step_a').value;
+            const sb = document.getElementById('step_b').value;
+            const sc = document.getElementById('step_c').value;
+            const sg = document.getElementById('step_g').value;
+
+            if (sa === '3' && sb === '1' && sc === '4' && sg === '2') {
+                if (!progress.exp1) { student.score += 3; progress.exp1 = true; }
+                document.getElementById('statusBadge1').innerText = 'Орындалды (3ұ)';
+                document.getElementById('statusBadge1').className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+                showToast('1-тапсырма дұрыс орындалды! (+3 ұпай)', '🎉');
+                updateProgress();
+            } else {
+                showToast('Реттілігінде қате бар! Қайтадан тексеріңіз.', '⚠️');
+            }
+        }
+
+        function checkExp2() {
+            const plantType = document.getElementById('plantTypeInput').value.trim();
+            const actionDesc = document.getElementById('plantActionDesc').value.trim();
+            const confirmed = document.getElementById('plantHandmadeConfirm').checked;
+
+            if (!plantType || !actionDesc || !confirmed) {
+                showToast('Барлық өрістерді толтырып, растау белгісін қойыңыз!', '⚠️');
+                return;
+            }
+
+            student.plantInfo = { plantType, actionDesc };
+
+            if (!progress.exp2) { student.score += 3; progress.exp2 = true; }
+            document.getElementById('statusBadge2').innerText = 'Орындалды (3ұ)';
+            document.getElementById('statusBadge2').className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+            showToast('Үйдегі қаламшелеу жұмысы сақталды! (+3 ұпай)', '🪴');
+            updateProgress();
+        }
+
+        function checkExp3() {
+            const val = document.getElementById('questQ1').value;
+            if (val === 'correct') {
+                if (!progress.exp3) { student.score += 2; progress.exp3 = true; }
+                document.getElementById('statusBadge3').innerText = 'Орындалды (2ұ)';
+                document.getElementById('statusBadge3').className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+                showToast('Бақылау сұрағы дұрыс! (+2 ұпай)', '🎉');
+                updateProgress();
+            } else {
+                showToast('Жауабыңыз қате, қайта қараңыз!', '⚠️');
+            }
+        }
+
+        function checkExp4() {
+            const finalChoice = document.querySelector('input[name="plantFinal"]:checked');
+            if (!finalChoice) { showToast('Қорытынды жауапты таңдаңыз!', '⚠️'); return; }
+
+            if (finalChoice.value === 'correct') {
+                if (!progress.exp4) { student.score += 2; progress.exp4 = true; }
+                document.getElementById('statusBadge4').innerText = 'Орындалды (2ұ)';
+                document.getElementById('statusBadge4').className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+                document.getElementById('statusBadge5').innerText = 'Дайын';
+                document.getElementById('statusBadge5').className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+                showToast('Қорытынды дұрыс! Барлық кезең аяқталды!', '🏆');
+                updateProgress();
+                setTimeout(() => switchTab(5), 1000);
+            } else {
+                showToast('Қате жауап! Қайтадан тексеріңіз.', '❌');
+            }
+        }
+
+        function openTeacherModal() { document.getElementById('teacherModal').classList.remove('hidden'); }
+        function closeTeacherModal() { document.getElementById('teacherModal').classList.add('hidden'); }
+        function verifyTeacher(e) {
+            e.preventDefault();
+            const pass = document.getElementById('teacherPass').value;
+            if (pass === '1234' || pass === 'admin') {
+                const list = document.getElementById('studentStatsList');
+                let roundedScore = Math.round(student.score * 10) / 10;
+                let pType = student.plantInfo.plantType || 'Көрсетілмеген';
+                let pDesc = student.plantInfo.actionDesc || 'Сипаттама жоқ';
+                list.innerHTML = `
+                    <div class="space-y-1 bg-white p-2.5 rounded border">
+                        <p class="font-bold">👤 ${student.name || 'Тіркелмеген'} (${student.class || '-'})</p>
+                        <p class="text-emerald-700 font-extrabold">Жалпы ұпай: ${roundedScore} / 10</p>
+                        <hr class="my-1">
+                        <p><strong>🪴 Үйдегі қаламшелеу жұмысы:</strong></p>
+                        <p class="text-slate-600"><strong>Өсімдік түрі:</strong> ${pType}</p>
+                        <p class="text-slate-600"><strong>Іс-әрекеті:</strong> ${pDesc}</p>
+                    </div>
+                `;
+                document.getElementById('teacherResultArea').classList.remove('hidden');
+                showToast('Мұғалім панеліне кірдіңіз!', '👩‍🏫');
+            } else {
+                showToast('Құпия сөз қате! (1234)', '❌');
+            }
+        }
+
+        function openCertificateModal() {
+            let roundedScore = Math.round(student.score * 10) / 10;
+            document.getElementById('certName').innerText = student.name || 'Атаусыз';
+            document.getElementById('certClass').innerText = student.class || '7-сынып';
+            document.getElementById('certScore').innerText = roundedScore + ' / 10 ұпай';
+            document.getElementById('certDate').innerText = new Date().toLocaleDateString();
+
+            document.getElementById('certStatus1').innerText = progress.exp1 ? '3 / 3 ұпай' : '0 / 3 ұпай';
+            document.getElementById('certStatus2').innerText = progress.exp2 ? '3 / 3 ұпай' : '0 / 3 ұпай';
+            document.getElementById('certStatus3').innerText = progress.exp3 ? '2 / 2 ұпай' : '0 / 2 ұпай';
+            document.getElementById('certStatus4').innerText = progress.exp4 ? '2 / 2 ұпай' : '0 / 2 ұпай';
+
+            document.getElementById('certificateModal').classList.remove('hidden');
+        }
+        function closeCertificateModal() { document.getElementById('certificateModal').classList.add('hidden'); }
+    </script>
+</body>
+</html>
